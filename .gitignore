@@ -1,2 +1,9 @@
-.vercel
+.vercel/
+.vercel_build_output/
+dist/
+.output/
+output/
+.vinxi/
+.tanstack/
+.nitro/
 .env*

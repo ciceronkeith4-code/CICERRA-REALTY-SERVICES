@@ -6,12 +6,12 @@ import { toast } from "sonner";
 
 // Predefined mock image choices
 const MOCK_IMAGES = [
-  { value: "/src/assets/property-1.jpg", label: "Modern Residence (Property 1)" },
-  { value: "/src/assets/property-2.jpg", label: "Cozy House (Property 2)" },
-  { value: "/src/assets/property-3.jpg", label: "Skyline Tower (Property 3)" },
-  { value: "/src/assets/property-4.jpg", label: "Forest Estate (Property 4)" },
-  { value: "/src/assets/property-5.jpg", label: "Beach Villa (Property 5)" },
-  { value: "/src/assets/property-6.jpg", label: "Prestige Mansion (Property 6)" },
+  { value: "/assets/property-1.jpg", label: "Modern Residence (Property 1)" },
+  { value: "/assets/property-2.jpg", label: "Cozy House (Property 2)" },
+  { value: "/assets/property-3.jpg", label: "Skyline Tower (Property 3)" },
+  { value: "/assets/property-4.jpg", label: "Forest Estate (Property 4)" },
+  { value: "/assets/property-5.jpg", label: "Beach Villa (Property 5)" },
+  { value: "/assets/property-6.jpg", label: "Prestige Mansion (Property 6)" },
 ];
 
 export const Route = createFileRoute("/admin")({
