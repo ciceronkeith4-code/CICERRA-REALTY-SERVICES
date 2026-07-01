@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Reveal } from "@/components/Reveal";
 import { Facebook, Mail, Phone, MapPin } from "lucide-react";
-import ryanCardImg from "@/assets/ryan-card.png";
+import ryanImg from "@/assets/ryan-arms-crossed.png";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -55,7 +55,7 @@ function ContactPage() {
             <div className="flex items-center gap-4">
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-gold/40 shadow-sm bg-neutral-100">
                 <img
-                  src={ryanCardImg}
+                  src={ryanImg}
                   alt="Ryan John Ciceron"
                   className="h-full w-full object-cover"
                 />
