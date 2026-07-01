@@ -142,12 +142,12 @@ function AdminPage() {
     });
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this listing?")) {
       if (confirm("Warning: This action is permanent and cannot be undone. Are you absolutely sure you want to delete this property?")) {
         const updated = allProps.filter((p) => p.id !== id);
         setAllProps(updated);
-        saveStoredProperties(updated);
+        await saveStoredProperties(updated);
         toast.success("Listing deleted successfully!");
       }
     }
@@ -173,7 +173,7 @@ function AdminPage() {
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) {
       toast.error("Please enter a property name.");
@@ -215,7 +215,7 @@ function AdminPage() {
     }
 
     setAllProps(updated);
-    saveStoredProperties(updated);
+    await saveStoredProperties(updated);
     setEditingProp(null);
     setIsAddMode(false);
   };
