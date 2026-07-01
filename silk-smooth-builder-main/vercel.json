@@ -1,8 +1,10 @@
 {
-  "rewrites": [
+  "outputDirectory": "dist",
+  "buildCommand": "npm run build",
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "/(.*)",
+      "dest": "/"
     }
   ]
 }
