@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "Cicerra/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "Cicerra/dist"
+      }
+    }
+  ]
+}
