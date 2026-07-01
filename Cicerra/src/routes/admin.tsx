@@ -255,8 +255,7 @@ function AdminPage() {
           </form>
           
           <p className="mt-6 text-2xs text-white/30">
-            Authorized brokers and admin personnel only.<br />
-            Tip: Use default pass <code className="text-gold font-bold">admin123</code>
+            Authorized brokers and admin personnel only.
           </p>
         </div>
       </div>
