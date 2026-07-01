@@ -49,14 +49,17 @@ function AdminPage() {
 
   // Pre-load items and check authentication state from session storage
   useEffect(() => {
-    setAllProps(getStoredProperties());
-    if (typeof window !== "undefined") {
-      const authenticated = sessionStorage.getItem("cicerra_admin_auth");
-      if (authenticated === "true") {
-        setIsAuthenticated(true);
-      }
+  (async () => {
+    const stored = await getStoredProperties();
+    setAllProps(stored);
+  })();
+  if (typeof window !== "undefined") {
+    const authenticated = sessionStorage.getItem("cicerra_admin_auth");
+    if (authenticated === "true") {
+      setIsAuthenticated(true);
     }
-  }, []);
+  }
+}, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

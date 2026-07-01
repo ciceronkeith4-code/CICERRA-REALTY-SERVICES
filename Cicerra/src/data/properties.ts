@@ -134,23 +134,25 @@ export const properties: Property[] = [
   },
 ];
 
-// LocalStorage helpers for real-time CRUD testing
-export function getStoredProperties(): Property[] {
-  if (typeof window !== "undefined") {
-    const saved = localStorage.getItem("cicerra_properties");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse stored properties", e);
-      }
-    }
+export async function getStoredProperties(): Promise<Property[]> {
+  try {
+    const res = await fetch("/api/properties");
+    if (!res.ok) throw new Error("Failed to fetch");
+    return await res.json();
+  } catch (e) {
+    console.error("Failed to fetch properties from API, falling back to defaults", e);
+    return properties;
   }
-  return properties;
 }
 
-export function saveStoredProperties(props: Property[]) {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("cicerra_properties", JSON.stringify(props));
+export async function saveStoredProperties(props: Property[]): Promise<void> {
+  try {
+    await fetch("/api/properties", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(props),
+    });
+  } catch (e) {
+    console.error("Failed to save properties to API", e);
   }
 }
