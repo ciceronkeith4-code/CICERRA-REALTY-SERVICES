@@ -201,7 +201,7 @@ export function Navbar() {
                   onClick={() => setOpen(false)}
                   className="inline-block rounded-full border border-gold bg-gold px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.25em] text-primary transition-all duration-300 hover:bg-transparent hover:text-white hover:border-white"
                 >
-                  Book Consultation
+                  Book a Viewing
                 </Link>
               </motion.div>
             </motion.nav>
