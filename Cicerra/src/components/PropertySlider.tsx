@@ -10,7 +10,10 @@ export function PropertySlider() {
   const [allProps, setAllProps] = useState<Property[]>([]);
 
   useEffect(() => {
-    setAllProps(getStoredProperties());
+    (async () => {
+      const stored = await getStoredProperties();
+      setAllProps(stored);
+    })();
   }, []);
 
   const categories = [

@@ -16,6 +16,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { BackToTop } from "@/components/BackToTop";
+import { JotformAgent } from "@/components/JotformAgent";
 
 function NotFoundComponent() {
   return (
@@ -161,6 +162,7 @@ function RootComponent() {
       </div>
       <BackToTop />
       <Toaster position="bottom-right" />
+      <JotformAgent />
     </QueryClientProvider>
   );
 }

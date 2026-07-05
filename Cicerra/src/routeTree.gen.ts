@@ -15,6 +15,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPropertiesRouteImport } from './routes/api/properties'
 
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
@@ -46,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPropertiesRoute = ApiPropertiesRouteImport.update({
+  id: '/api/properties',
+  path: '/api/properties',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/services': typeof ServicesRoute
+  '/api/properties': typeof ApiPropertiesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/services': typeof ServicesRoute
+  '/api/properties': typeof ApiPropertiesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,13 +79,27 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/services': typeof ServicesRoute
+  '/api/properties': typeof ApiPropertiesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/about' | '/admin' | '/contact' | '/properties' | '/services'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/contact'
+    | '/properties'
+    | '/services'
+    | '/api/properties'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/admin' | '/contact' | '/properties' | '/services'
+  to:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/contact'
+    | '/properties'
+    | '/services'
+    | '/api/properties'
   id:
     | '__root__'
     | '/'
@@ -86,6 +108,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/properties'
     | '/services'
+    | '/api/properties'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,6 +118,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   PropertiesRoute: typeof PropertiesRoute
   ServicesRoute: typeof ServicesRoute
+  ApiPropertiesRoute: typeof ApiPropertiesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -141,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/properties': {
+      id: '/api/properties'
+      path: '/api/properties'
+      fullPath: '/api/properties'
+      preLoaderRoute: typeof ApiPropertiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -151,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   PropertiesRoute: PropertiesRoute,
   ServicesRoute: ServicesRoute,
+  ApiPropertiesRoute: ApiPropertiesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
