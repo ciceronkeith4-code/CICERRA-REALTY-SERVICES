@@ -8,20 +8,7 @@ export function JotformAgent() {
     // Check if the script already exists in the document to prevent duplicate injection
     let script = document.getElementById(scriptId) as HTMLScriptElement | null;
 
-    if (!script) {
-      script = document.createElement("script");
-      script.src = jotformScriptSrc;
-      script.id = scriptId;
-      script.async = true;
-      
-      // Handle potential script loading errors
-      script.onerror = (err) => {
-        console.error("Failed to load Jotform AI Agent script:", err);
-      };
-
-      document.body.appendChild(script);
-    } else {
-      // If script already exists (e.g. fast page transitions), re-initialize if AgentInitializer is available
+    const initializeAgent = () => {
       const anyWindow = window as any;
       if (anyWindow.AgentInitializer && typeof anyWindow.AgentInitializer.init === "function") {
         try {
@@ -48,7 +35,7 @@ export function JotformAgent() {
               position: "right",
               autoOpenChatIn: "1",
               layout: "minimal",
-              size: "md",
+              size: "sm", // Set size to 'sm' to make it compact and not too large
               placeholder: "Ask AI",
               chatbotLayoutControls: "No",
               chatbotLayoutType: "overlay",
@@ -58,24 +45,88 @@ export function JotformAgent() {
             isVoiceWebCallEnabled: true
           });
         } catch (e) {
-          console.error("Error re-initializing Jotform AI Agent:", e);
+          console.error("Error initializing Jotform AI Agent:", e);
         }
       }
+    };
+
+    if (!script) {
+      script = document.createElement("script");
+      script.src = jotformScriptSrc;
+      script.id = scriptId;
+      script.async = true;
+      script.onload = initializeAgent;
+      script.onerror = (err) => {
+        console.error("Failed to load Jotform AI Agent script:", err);
+      };
+      document.body.appendChild(script);
+    } else {
+      // Re-initialize if the script was already loaded
+      initializeAgent();
+    }
+
+    // Add CSS stylesheet rules to restrict the dimensions of the chatbot iframe/container 
+    // and prevent it from blocking interactions on the rest of the website.
+    const styleId = "jotform-agent-custom-styles";
+    let styleElement = document.getElementById(styleId);
+    if (!styleElement) {
+      styleElement = document.createElement("style");
+      styleElement.id = styleId;
+      styleElement.textContent = `
+        /* Prevent the container from intercepting clicks on the website when chatbot is closed/minimized */
+        #JotformAgent-019f32590e4870008bdc26a2562d66b08f68 {
+          pointer-events: none !important;
+          max-width: 380px !important;
+          max-height: 580px !important;
+          width: 380px !important;
+          height: 580px !important;
+          bottom: 20px !important;
+          right: 20px !important;
+        }
+        
+        /* Re-enable pointer events for the actual chatbot elements */
+        #JotformAgent-019f32590e4870008bdc26a2562d66b08f68 * {
+          pointer-events: auto !important;
+        }
+
+        /* Ensure the iframe scales properly within our container constraints */
+        #JotformAgent-019f32590e4870008bdc26a2562d66b08f68 iframe {
+          max-width: 100% !important;
+          max-height: 100% !important;
+          border-radius: 12px !important;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Responsive behavior for mobile screens */
+        @media (max-width: 480px) {
+          #JotformAgent-019f32590e4870008bdc26a2562d66b08f68 {
+            width: calc(100% - 32px) !important;
+            max-width: 100% !important;
+            height: 75vh !important;
+            max-height: 520px !important;
+            bottom: 16px !important;
+            right: 16px !important;
+          }
+        }
+      `;
+      document.head.appendChild(styleElement);
     }
 
     // Cleanup on component unmount
     return () => {
-      // Remove main script tag
       const scriptToRemove = document.getElementById(scriptId);
       if (scriptToRemove) {
         scriptToRemove.remove();
       }
 
-      // Clean up Jotform's dynamic agent script from head if present
+      const styleToRemove = document.getElementById(styleId);
+      if (styleToRemove) {
+        styleToRemove.remove();
+      }
+
       const dynamicScripts = document.querySelectorAll('script[src*="for-embedded-agent.js"]');
       dynamicScripts.forEach((el) => el.remove());
 
-      // Clear internal contents of the chatbot container to prevent visual duplicate traces
       const rootDiv = document.getElementById("JotformAgent-019f32590e4870008bdc26a2562d66b08f68");
       if (rootDiv) {
         rootDiv.innerHTML = "";
@@ -90,9 +141,8 @@ export function JotformAgent() {
         position: "fixed",
         bottom: "20px",
         right: "20px",
-        zIndex: 999999, // Keep above other page elements
+        zIndex: 999999,
       }}
-      className="jotform-agent-container"
     />
   );
 }
