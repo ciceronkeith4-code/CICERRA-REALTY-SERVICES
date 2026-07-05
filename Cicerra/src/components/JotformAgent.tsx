@@ -81,7 +81,7 @@ export function JotformAgent() {
           width: 380px !important;
           height: 580px !important;
           bottom: 20px !important;
-          right: 20px !important;
+          right: 96px !important; /* Shifted left to avoid merging with Viber and Back To Top buttons */
         }
         
         /* Re-enable pointer events for the actual chatbot elements */
@@ -100,12 +100,12 @@ export function JotformAgent() {
         /* Responsive behavior for mobile screens */
         @media (max-width: 480px) {
           #JotformAgent-019f32590e4870008bdc26a2562d66b08f68 {
-            width: calc(100% - 32px) !important;
+            width: calc(100% - 96px) !important;
             max-width: 100% !important;
-            height: 75vh !important;
-            max-height: 520px !important;
+            height: 70vh !important;
+            max-height: 480px !important;
             bottom: 16px !important;
-            right: 16px !important;
+            right: 80px !important; /* Shifted left on mobile to avoid Viber button */
           }
         }
       `;
