@@ -16,6 +16,8 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPropertiesRouteImport } from './routes/api/properties'
+import { Route as ApiContactRouteImport } from './routes/api/contact'
+import { Route as ApiAdminSessionRouteImport } from './routes/api/admin/session'
 
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
@@ -52,6 +54,16 @@ const ApiPropertiesRoute = ApiPropertiesRouteImport.update({
   path: '/api/properties',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiContactRoute = ApiContactRouteImport.update({
+  id: '/api/contact',
+  path: '/api/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminSessionRoute = ApiAdminSessionRouteImport.update({
+  id: '/api/admin/session',
+  path: '/api/admin/session',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,7 +72,9 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/services': typeof ServicesRoute
+  '/api/contact': typeof ApiContactRoute
   '/api/properties': typeof ApiPropertiesRoute
+  '/api/admin/session': typeof ApiAdminSessionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +83,9 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/services': typeof ServicesRoute
+  '/api/contact': typeof ApiContactRoute
   '/api/properties': typeof ApiPropertiesRoute
+  '/api/admin/session': typeof ApiAdminSessionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +95,9 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/services': typeof ServicesRoute
+  '/api/contact': typeof ApiContactRoute
   '/api/properties': typeof ApiPropertiesRoute
+  '/api/admin/session': typeof ApiAdminSessionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,7 +108,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/properties'
     | '/services'
+    | '/api/contact'
     | '/api/properties'
+    | '/api/admin/session'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +119,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/properties'
     | '/services'
+    | '/api/contact'
     | '/api/properties'
+    | '/api/admin/session'
   id:
     | '__root__'
     | '/'
@@ -108,7 +130,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/properties'
     | '/services'
+    | '/api/contact'
     | '/api/properties'
+    | '/api/admin/session'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +142,9 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   PropertiesRoute: typeof PropertiesRoute
   ServicesRoute: typeof ServicesRoute
+  ApiContactRoute: typeof ApiContactRoute
   ApiPropertiesRoute: typeof ApiPropertiesRoute
+  ApiAdminSessionRoute: typeof ApiAdminSessionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +198,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPropertiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/contact': {
+      id: '/api/contact'
+      path: '/api/contact'
+      fullPath: '/api/contact'
+      preLoaderRoute: typeof ApiContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/session': {
+      id: '/api/admin/session'
+      path: '/api/admin/session'
+      fullPath: '/api/admin/session'
+      preLoaderRoute: typeof ApiAdminSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -182,7 +222,9 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   PropertiesRoute: PropertiesRoute,
   ServicesRoute: ServicesRoute,
+  ApiContactRoute: ApiContactRoute,
   ApiPropertiesRoute: ApiPropertiesRoute,
+  ApiAdminSessionRoute: ApiAdminSessionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

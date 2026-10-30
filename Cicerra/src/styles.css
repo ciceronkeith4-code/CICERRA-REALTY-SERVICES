@@ -29,6 +29,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-gold: var(--gold);
   --color-gold-soft: var(--gold-soft);
+  --color-gold-deep: var(--gold-deep);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -64,6 +65,8 @@
 
   --gold: oklch(0.76 0.12 85);
   --gold-soft: oklch(0.86 0.09 88);
+  /* Gold dark enough for text on light backgrounds (≈5.3:1 on white). */
+  --gold-deep: oklch(0.52 0.1 80);
 
   --destructive: oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.99 0 0);
@@ -100,6 +103,17 @@
     font-family: var(--font-display);
     font-weight: 400;
     letter-spacing: -0.01em;
+  }
+  /* One consistent keyboard focus indicator. gold-deep keeps ≥3:1 against
+     both the white sections and the navy header/footer. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-gold-deep);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 

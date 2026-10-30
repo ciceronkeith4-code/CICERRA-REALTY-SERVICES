@@ -1,26 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import aboutImg from "@/assets/about.jpg";
-import ryanImg from "@/assets/ryan-arms-crossed.png";
+import ryanImg from "@/assets/ryan-arms-crossed.jpg";
+import ryanWebp from "@/assets/ryan-arms-crossed.webp";
 import { Reveal } from "@/components/Reveal";
 import { ArrowLeft } from "lucide-react";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About — Cicerra Real Estate Service" },
-      {
-        name: "description",
-        content:
-          "Learn about Cicerra Real Estate Service — a decade of trusted real estate guidance for Filipino families and investors.",
-      },
-      { property: "og:title", content: "About Cicerra Real Estate Service" },
-      {
-        property: "og:description",
-        content: "More than real estate. Helping families find home.",
-      },
-      { property: "og:image", content: aboutImg },
-    ],
-  }),
+  head: () =>
+    seo({
+      title: "About — Cicerra Realty Services",
+      description:
+        "Learn about Cicerra Realty Services — trusted real estate guidance for Filipino families and investors from a PRC-licensed broker and appraiser.",
+      path: "/about",
+      image: aboutImg,
+    }),
   component: AboutPage,
 });
 
@@ -43,7 +37,7 @@ function AboutPage() {
             >
               <ArrowLeft className="h-3.5 w-3.5" /> Back to Home
             </Link>
-            <p className="text-[10px] uppercase tracking-[0.4em] text-gold">About Cicerra</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gold-deep">About Cicerra</p>
             <h1 className="mt-5 font-display text-5xl leading-[1.05] text-balance sm:text-7xl">
               More than real estate.<br />
               <span className="italic text-muted-foreground">Helping families find home.</span>
@@ -57,21 +51,24 @@ function AboutPage() {
           {/* Side Image */}
           <Reveal className="lg:col-span-5 flex justify-center">
             <div className="relative overflow-hidden rounded-3xl border-2 border-gold/30 bg-white p-2 shadow-md w-fit">
-              <img
-                src={ryanImg}
-                alt="Ryan John Ciceron"
-                loading="lazy"
-                width={600}
-                height={800}
-                className="h-[55vh] min-h-[360px] w-auto max-w-full rounded-2xl object-contain"
-              />
+              <picture>
+                <source srcSet={ryanWebp} type="image/webp" />
+                <img
+                  src={ryanImg}
+                  alt="Ryan John Ciceron"
+                  decoding="async"
+                  width={673}
+                  height={1000}
+                  className="h-[55vh] min-h-[360px] w-auto max-w-full rounded-2xl object-contain"
+                />
+              </picture>
             </div>
           </Reveal>
 
           {/* Visual Story Blocks */}
           <div className="lg:col-span-7 space-y-10 pl-0 lg:pl-6">
             <Reveal>
-              <p className="text-[10px] uppercase tracking-[0.4em] text-gold font-bold">WHO WE ARE</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-gold-deep font-bold">WHO WE ARE</p>
               <h2 className="mt-4 font-display text-3xl sm:text-4xl text-[#1B365D]">
                 A decade of patient, local expertise.
               </h2>
@@ -102,7 +99,7 @@ function AboutPage() {
               ].map((item, idx) => (
                 <Reveal key={item.title} delay={0.1 + idx * 0.05}>
                   <div className="space-y-2 border-l-2 border-gold/45 pl-5 py-1">
-                    <p className="text-xs uppercase tracking-wider text-gold font-bold">{item.title}</p>
+                    <p className="text-xs uppercase tracking-wider text-gold-deep font-bold">{item.title}</p>
                     <h3 className="font-semibold text-foreground text-sm">{item.bold}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
                   </div>
@@ -116,7 +113,7 @@ function AboutPage() {
       <section className="bg-surface py-24 sm:py-32">
         <div className="container-rail">
           <Reveal className="max-w-xl">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-gold">Our journey</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gold-deep">Our journey</p>
             <h2 className="mt-4 font-display text-3xl sm:text-4xl">Milestones, lightly told.</h2>
           </Reveal>
 
@@ -124,7 +121,7 @@ function AboutPage() {
             {milestones.map((m, i) => (
               <Reveal key={m.year} delay={i * 0.08}>
                 <div className="h-full rounded-3xl border border-border bg-card p-8">
-                  <p className="font-display text-3xl text-gold">{m.year}</p>
+                  <p className="font-display text-3xl text-gold-deep">{m.year}</p>
                   <h3 className="mt-4 font-display text-xl text-foreground">{m.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{m.body}</p>
                 </div>

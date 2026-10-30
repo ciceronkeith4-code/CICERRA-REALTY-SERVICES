@@ -9,8 +9,11 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { MotionConfig } from "framer-motion";
 
 import appCss from "../styles.css?url";
+import heroImg from "@/assets/hero.jpg";
+import { SITE_NAME, absoluteUrl, organizationJsonLd } from "@/lib/seo";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -54,6 +57,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
+            type="button"
             onClick={() => {
               router.invalidate();
               reset();
@@ -86,13 +90,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Cicerra Realty Services helps Filipino families and investors find premium properties with accredited broker and appraiser guidance.",
       },
       { name: "author", content: "Cicerra Realty Services" },
+      { name: "robots", content: "index, follow" },
       { property: "og:title", content: "Cicerra Realty Services" },
       {
         property: "og:description",
         content: "Luxury homes. Smart investments. Trusted real estate experts.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: SITE_NAME },
+      { property: "og:locale", content: "en_PH" },
+      { property: "og:image", content: absoluteUrl(heroImg) },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: absoluteUrl(heroImg) },
+      { "script:ld+json": organizationJsonLd },
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/favicon.png?v=2" },
@@ -153,16 +163,24 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col bg-background text-foreground">
-        {!hideNavbar && <Navbar />}
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        {!hideFooter && <Footer />}
-      </div>
-      <BackToTop />
-      <Toaster position="bottom-right" />
-      <JotformAgent />
+      <MotionConfig reducedMotion="user">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-gold focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-primary"
+        >
+          Skip to content
+        </a>
+        <div className="flex min-h-screen flex-col bg-background text-foreground">
+          {!hideNavbar && <Navbar />}
+          <main id="main" tabIndex={-1} className="flex-1 outline-none">
+            <Outlet />
+          </main>
+          {!hideFooter && <Footer />}
+        </div>
+        <BackToTop />
+        <Toaster position="bottom-right" />
+        <JotformAgent />
+      </MotionConfig>
     </QueryClientProvider>
   );
 }

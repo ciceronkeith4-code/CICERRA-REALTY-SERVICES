@@ -16,7 +16,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-display text-lg">Quick Links</h4>
+            <h2 className="font-display text-lg">Quick Links</h2>
             <span className="mt-3 block h-px w-6 bg-gold" />
             <ul className="mt-5 space-y-3 text-sm text-primary-foreground/70">
               <li><Link to="/about" className="hover:text-gold">About</Link></li>
@@ -27,40 +27,41 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-display text-lg">Contact</h4>
+            <h2 className="font-display text-lg">Contact</h2>
             <span className="mt-3 block h-px w-6 bg-gold" />
             <ul className="mt-5 space-y-3 text-sm text-primary-foreground/70">
               <li className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                <span>Imus, Cavite, Philippines</span>
+                <span className="min-w-0 break-words">Imus, Cavite, Philippines</span>
               </li>
               <li className="flex items-start gap-3">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                <span>+63 960 350 3659</span>
+                <span className="min-w-0 break-words">+63 960 350 3659</span>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-                <span>cicerra.realty@gmail.com</span>
+                <span className="min-w-0 break-words">cicerra.realty@gmail.com</span>
               </li>
-              <li className="flex items-start gap-3">
+              <li className="flex min-w-0 items-start gap-3">
                 <Facebook className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
                 <a
                   href="https://facebook.com/cicerrarealestateservice"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-gold transition-colors duration-200"
+                  className="min-w-0 break-words hover:text-gold transition-colors duration-200"
                 >
-                  facebook.com/cicerrarealestateservice
+                  Cicerra Realty Services
+                  <span className="sr-only"> on Facebook (opens in a new tab)</span>
                 </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-primary-foreground/10 pt-6 text-xs text-primary-foreground/50 sm:flex-row sm:items-center">
+        <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-primary-foreground/10 pt-6 text-xs text-primary-foreground/70 sm:flex-row sm:items-center">
           <div className="flex flex-col gap-1.5">
             <p>© {new Date().getFullYear()} Cicerra Realty Services. All rights reserved.</p>
-            <p className="text-[10px] text-primary-foreground/45 font-semibold tracking-wider uppercase">
+            <p className="text-[11px] text-primary-foreground/70 font-semibold tracking-wider uppercase">
               RYAN JOHN S. CICERON, REB, REA | Broker PRC No. 35705 | Appraiser PRC No. 13309 | DHSUD Reg. No. 10178
             </p>
           </div>

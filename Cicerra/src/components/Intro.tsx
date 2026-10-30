@@ -91,8 +91,9 @@ export function Intro({ onDone }: { onDone: () => void }) {
           </div>
 
           <button
+            type="button"
             onClick={skip}
-            className="absolute bottom-6 right-6 text-[10px] uppercase tracking-[0.3em] text-white/40 transition hover:text-gold"
+            className="absolute bottom-6 right-6 text-[11px] uppercase tracking-[0.3em] text-white/70 transition hover:text-gold"
           >
             Skip intro →
           </button>

@@ -1,14 +1,16 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@/components/Logo";
+import { adminLogout } from "@/lib/admin-client";
 
+// All real routes; TanStack <Link> sets aria-current="page" on the active one.
 const links = [
-  { to: "/", hash: undefined, label: "Home" },
-  { to: "/", hash: "about", label: "About" },
-  { to: "/", hash: "services", label: "Services" },
-  { to: "/", hash: "partners", label: "Partners" },
+  { to: "/", label: "Home" },
+  { to: "/properties", label: "Properties" },
+  { to: "/services", label: "Services" },
+  { to: "/about", label: "About" },
 ] as const;
 
 export function Navbar() {
@@ -17,6 +19,48 @@ export function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Mobile menu: lock scroll, trap focus, close on Escape, restore focus on close.
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const focusables = () =>
+      Array.from(
+        menuRef.current?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") ?? [],
+      );
+    focusables()[0]?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = focusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+
+    const toggle = toggleRef.current;
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      toggle?.focus();
+    };
+  }, [open]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -47,9 +91,8 @@ export function Navbar() {
     return () => window.removeEventListener("click", handleClose);
   }, [dropdownOpen]);
 
-  const handleNavbarLogout = () => {
-    sessionStorage.removeItem("cicerra_admin_auth");
-    window.dispatchEvent(new Event("cicerra_auth_change"));
+  const handleNavbarLogout = async () => {
+    await adminLogout();
     window.location.href = "/";
   };
 
@@ -72,6 +115,9 @@ export function Navbar() {
         {isAdmin ? (
           <div className="relative">
             <button
+              type="button"
+              aria-haspopup="true"
+              aria-expanded={dropdownOpen}
               onClick={(e) => {
                 e.stopPropagation();
                 setDropdownOpen(!dropdownOpen);
@@ -100,6 +146,7 @@ export function Navbar() {
                   className="absolute right-0 mt-1.5 w-36 rounded-xl border border-white/10 bg-[#051C3F] p-1 shadow-lg z-50"
                 >
                   <button
+                    type="button"
                     onClick={handleNavbarLogout}
                     className="w-full rounded-lg py-2 text-center text-[10px] font-bold uppercase tracking-widest text-red-400 hover:bg-white/5 transition-colors cursor-pointer"
                   >
@@ -111,15 +158,14 @@ export function Navbar() {
           </div>
         ) : (
           <>
-            <nav className="hidden items-center gap-8 md:flex">
+            <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
               {links.map((l) => (
                 <Link
                   key={l.label}
                   to={l.to}
-                  hash={l.hash}
                   className="group relative text-sm tracking-wide transition-colors text-white/85 hover:text-white"
                   activeProps={{ className: "text-white font-semibold" }}
-                  activeOptions={{ exact: true, includeHash: true }}
+                  activeOptions={{ exact: true, includeSearch: false }}
                 >
                   {l.label}
                   <span className="absolute -bottom-1 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
@@ -137,9 +183,13 @@ export function Navbar() {
             </div>
 
             <button
-              aria-label="Open menu"
-              onClick={() => setOpen(true)}
-              className="md:hidden text-white"
+              ref={toggleRef}
+              type="button"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              onClick={() => setOpen((v) => !v)}
+              className="md:hidden -mr-2.5 flex h-11 w-11 items-center justify-center text-white"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -150,6 +200,11 @@ export function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={menuRef}
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
             initial={{ y: "-100%" }}
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
@@ -159,14 +214,16 @@ export function Navbar() {
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/5">
               <Logo />
               <button
+                type="button"
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
-                className="text-white hover:text-gold transition-colors duration-200"
+                className="-mr-2.5 flex h-11 w-11 items-center justify-center text-white hover:text-gold transition-colors duration-200"
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
             <motion.nav
+              aria-label="Main"
               initial="hidden"
               animate="show"
               variants={{ show: { transition: { staggerChildren: 0.04 } } }}
@@ -183,7 +240,7 @@ export function Navbar() {
                 >
                   <Link
                     to={l.to}
-                    hash={l.hash}
+                    activeOptions={{ exact: true, includeSearch: false }}
                     onClick={() => setOpen(false)}
                     className="font-sans text-xl uppercase tracking-[0.25em] text-white/80 hover:text-gold transition-colors duration-200"
                   >

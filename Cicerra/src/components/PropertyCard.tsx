@@ -21,6 +21,7 @@ export function PropertyCard({ property }: { property: Property }) {
                 src={property.image}
                 alt={property.name}
                 loading="lazy"
+                decoding="async"
                 width={1280}
                 height={1024}
                 className="h-full w-full object-cover transition-transform duration-[1.4s] ease-out group-hover:scale-110"
@@ -33,7 +34,7 @@ export function PropertyCard({ property }: { property: Property }) {
               <span className="text-[8px] uppercase tracking-[0.3em] text-white/40 font-semibold">Realty Services</span>
             </div>
           )}
-          <span className="absolute left-5 top-5 rounded-full border border-white/30 bg-black/30 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-white backdrop-blur">
+          <span className="absolute left-5 top-5 rounded-full border border-white/30 bg-black/30 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-white backdrop-blur">
             {property.tag}
           </span>
           <span className="absolute bottom-5 right-5 font-display text-2xl text-white">
@@ -42,7 +43,7 @@ export function PropertyCard({ property }: { property: Property }) {
         </div>
 
         <div className="flex flex-1 flex-col p-7">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
             {property.location}
           </p>
           <h3 className="mt-2 font-display text-2xl text-foreground">{property.name}</h3>
@@ -71,6 +72,7 @@ export function PropertyCard({ property }: { property: Property }) {
 
           {property.details ? (
             <button
+              type="button"
               onClick={() => setModalOpen(true)}
               className="mt-6 inline-flex items-center gap-2 self-start text-xs uppercase tracking-[0.25em] text-foreground transition hover:text-gold cursor-pointer font-bold"
             >
@@ -89,39 +91,52 @@ export function PropertyCard({ property }: { property: Property }) {
 
       {/* Luxury Detail Modal Overlay */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md">
-          <div className="relative w-full max-w-2xl rounded-3xl border border-white/10 bg-[#051C3F] p-6 sm:p-8 text-white shadow-2xl overflow-y-auto max-h-[90vh] animate-fade-in">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md"
+          onKeyDown={(e) => e.key === "Escape" && setModalOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`property-${property.id}-title`}
+            className="relative w-full max-w-2xl rounded-3xl border border-white/10 bg-[#051C3F] p-6 sm:p-8 text-white shadow-2xl overflow-y-auto max-h-[90vh] animate-fade-in"
+          >
             <button
+              type="button"
+              autoFocus
+              aria-label="Close details"
               onClick={() => setModalOpen(false)}
-              className="absolute right-6 top-6 rounded-full bg-white/5 p-2 text-white/70 hover:bg-white/10 hover:text-white transition cursor-pointer"
+              className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition cursor-pointer"
             >
-              <X className="h-5 w-5" />
+              <X aria-hidden="true" className="h-5 w-5" />
             </button>
             
             <span className="rounded-full bg-gold/15 text-gold text-[10px] uppercase tracking-widest font-bold px-3 py-1 border border-gold/30">
               {property.tag}
             </span>
             
-            <h2 className="mt-4 font-display text-3xl sm:text-4xl text-white">{property.name}</h2>
+            <h2 id={`property-${property.id}-title`} className="mt-4 font-display text-3xl sm:text-4xl text-white">
+              {property.name}
+            </h2>
             <p className="mt-1 text-xs uppercase tracking-[0.2em] text-gold/80">{property.location}</p>
             
             {property.image && (
               <div className="mt-6 aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-md">
-                <img src={property.image} alt={property.name} className="h-full w-full object-cover" />
+                <img src={property.image} alt="" width={1280} height={1024} decoding="async" className="h-full w-full object-cover" />
               </div>
             )}
             
             <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 border-y border-white/10 py-5 text-sm">
               <div>
-                <span className="text-white/40 text-[9px] block uppercase tracking-wider">Price</span>
+                <span className="text-white/60 text-[11px] block uppercase tracking-wider">Price</span>
                 <span className="font-display text-lg text-gold font-bold">{property.price}</span>
               </div>
               <div>
-                <span className="text-white/40 text-[9px] block uppercase tracking-wider">Size / Lot</span>
+                <span className="text-white/60 text-[11px] block uppercase tracking-wider">Size / Lot</span>
                 <span className="font-semibold">{property.lot}</span>
               </div>
               <div>
-                <span className="text-white/40 text-[9px] block uppercase tracking-wider">Type</span>
+                <span className="text-white/60 text-[11px] block uppercase tracking-wider">Type</span>
                 <span className="font-semibold">{property.type}</span>
               </div>
             </div>
@@ -133,6 +148,7 @@ export function PropertyCard({ property }: { property: Property }) {
             
             <div className="mt-8 flex items-center justify-end gap-3">
               <button
+                type="button"
                 onClick={() => setModalOpen(false)}
                 className="rounded-full border border-white/20 bg-transparent px-6 py-3 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 transition cursor-pointer"
               >

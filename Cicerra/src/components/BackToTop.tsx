@@ -43,13 +43,17 @@ export function BackToTop() {
           >
             <img
               src={viberLogo}
-              alt="Viber"
+              alt=""
+              width={48}
+              height={48}
+              decoding="async"
               className="h-full w-full object-contain rounded-full scale-105"
             />
           </motion.a>
 
           {/* Back To Top Button */}
           <motion.button
+            type="button"
             initial={{ opacity: 0, scale: 0.8, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 10 }}
@@ -58,7 +62,7 @@ export function BackToTop() {
             aria-label="Back to top"
             className="fixed bottom-8 right-8 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-gold bg-[#1B365D]/95 hover:bg-[#12284C] dark:bg-gold dark:hover:bg-gold-soft text-white dark:text-primary shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-sm transition-transform duration-200 hover:scale-110 active:scale-95 cursor-pointer"
           >
-            <ArrowUp className="h-5 w-5 animate-pulse" />
+            <ArrowUp aria-hidden="true" className="h-5 w-5 animate-pulse motion-reduce:animate-none" />
           </motion.button>
         </>
       )}

@@ -1,7 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function JotformAgent() {
+  // Defer the third-party widget (and its greeting bubble) until the visitor
+  // scrolls or interacts, so it neither covers the hero nor delays first paint.
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
+    if (ready) return;
+    const enable = () => setReady(true);
+    const events = ["scroll", "pointerdown", "keydown"] as const;
+    events.forEach((ev) => window.addEventListener(ev, enable, { once: true, passive: true }));
+    return () => events.forEach((ev) => window.removeEventListener(ev, enable));
+  }, [ready]);
+
+  useEffect(() => {
+    if (!ready) return;
     const scriptId = "jotform-agent-script";
     const jotformScriptSrc = "https://cdn.jotfor.ms/agent/embedjs/019f32590e4870008bdc26a2562d66b08f68/embed.js";
 
@@ -132,16 +145,19 @@ export function JotformAgent() {
         rootDiv.innerHTML = "";
       }
     };
-  }, []);
+  }, [ready]);
 
   return (
-    <div
+    <aside
+      aria-label="Chat assistant"
       id="JotformAgent-019f32590e4870008bdc26a2562d66b08f68"
       style={{
         position: "fixed",
         bottom: "20px",
         right: "20px",
-        zIndex: 999999,
+        // Above page content and the z-50 Viber/back-to-top buttons, below the
+        // open mobile menu (z-100).
+        zIndex: 60,
       }}
     />
   );

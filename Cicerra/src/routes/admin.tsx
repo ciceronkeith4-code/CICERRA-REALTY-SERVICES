@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { getStoredProperties, saveStoredProperties, type Property } from "@/data/properties";
 import { Plus, Trash2, Edit3, Save, RotateCcw, Lock, Eye, EyeOff, LayoutDashboard, Search, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { adminLogin, adminLogout, checkAdminSession } from "@/lib/admin-client";
 
 // Predefined mock image choices
 const MOCK_IMAGES = [
@@ -15,6 +16,7 @@ const MOCK_IMAGES = [
 ];
 
 export const Route = createFileRoute("/admin")({
+  head: () => ({ meta: [{ name: "robots", content: "noindex, nofollow" }] }),
   component: AdminPage,
 });
 
@@ -23,6 +25,7 @@ function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
 
   // Listings state
   const [allProps, setAllProps] = useState<Property[]>([]);
@@ -47,54 +50,51 @@ function AdminPage() {
     details: "",
   });
 
-  // Pre-load items and check authentication state from session storage
+  // Pre-load items and check the server-side admin session
   useEffect(() => {
-  (async () => {
-    const stored = await getStoredProperties();
-    setAllProps(stored);
-  })();
-  if (typeof window !== "undefined") {
-    const authenticated = sessionStorage.getItem("cicerra_admin_auth");
-    if (authenticated === "true") {
-      setIsAuthenticated(true);
-    }
-  }
-}, []);
+    let alive = true;
+    (async () => {
+      const [stored, authenticated] = await Promise.all([
+        getStoredProperties(),
+        checkAdminSession(),
+      ]);
+      if (!alive) return;
+      setAllProps(stored);
+      setIsAuthenticated(authenticated);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Default broker app password: "cicerraadmin"
-    if (password === "cicerraadmin" || password === "admin123") {
+    setSigningIn(true);
+    const result = await adminLogin(password);
+    setSigningIn(false);
+    if (result.ok) {
       setIsAuthenticated(true);
-      sessionStorage.setItem("cicerra_admin_auth", "true");
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("cicerra_auth_change"));
-      }
+      setPassword("");
       toast.success("Access granted. Welcome back, Ryan!");
     } else {
-      toast.error("Incorrect administrator password.");
+      toast.error(result.error ?? "Incorrect administrator password.");
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await adminLogout();
     setIsAuthenticated(false);
-    sessionStorage.removeItem("cicerra_admin_auth");
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("cicerra_auth_change"));
-    }
     toast.info("Logged out of the administration panel.");
   };
 
-  const handleReset = () => {
-    if (confirm("Are you sure you want to reset all modifications? This restores the 9 default listings.")) {
-      const pass = prompt("Please enter the administrator password to confirm database reset:");
-      if (pass === "admin123" || pass === "cicerraadmin") {
-        localStorage.removeItem("cicerra_properties");
-        toast.success("Database has been reset successfully!");
-        window.location.reload();
-      } else if (pass !== null) {
-        toast.error("Incorrect password. Reset aborted.");
-      }
+  const persist = async (updated: Property[]): Promise<boolean> => {
+    try {
+      await saveStoredProperties(updated);
+      setAllProps(updated);
+      return true;
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Save failed.");
+      return false;
     }
   };
 
@@ -146,9 +146,7 @@ function AdminPage() {
     if (confirm("Are you sure you want to delete this listing?")) {
       if (confirm("Warning: This action is permanent and cannot be undone. Are you absolutely sure you want to delete this property?")) {
         const updated = allProps.filter((p) => p.id !== id);
-        setAllProps(updated);
-        await saveStoredProperties(updated);
-        toast.success("Listing deleted successfully!");
+        if (await persist(updated)) toast.success("Listing deleted successfully!");
       }
     }
   };
@@ -205,17 +203,12 @@ function AdminPage() {
       details: formData.details.trim() || undefined,
     };
 
-    let updated: Property[] = [];
-    if (isAddMode) {
-      updated = [...allProps, propertyPayload];
-      toast.success("Listing added successfully!");
-    } else {
-      updated = allProps.map((p) => (p.id === formData.id ? propertyPayload : p));
-      toast.success("Listing updated successfully!");
-    }
+    const updated = isAddMode
+      ? [...allProps, propertyPayload]
+      : allProps.map((p) => (p.id === formData.id ? propertyPayload : p));
 
-    setAllProps(updated);
-    await saveStoredProperties(updated);
+    if (!(await persist(updated))) return;
+    toast.success(isAddMode ? "Listing added successfully!" : "Listing updated successfully!");
     setEditingProp(null);
     setIsAddMode(false);
   };
@@ -235,14 +228,17 @@ function AdminPage() {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
+                aria-label="Admin password"
+                autoComplete="current-password"
                 placeholder="Enter Admin Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-5 pr-12 text-sm text-white placeholder-white/30 outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all duration-300"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 py-4 pl-5 pr-12 text-sm text-white placeholder-white/30 focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all duration-300"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 className="absolute inset-y-0 right-4 flex items-center text-white/40 hover:text-white"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -251,9 +247,10 @@ function AdminPage() {
             
             <button
               type="submit"
-              className="mt-6 w-full rounded-2xl bg-gold py-4 text-xs font-bold uppercase tracking-widest text-primary transition-all duration-300 hover:bg-gold-soft hover:shadow-lg hover:shadow-gold/15"
+              disabled={signingIn}
+              className="mt-6 w-full rounded-2xl bg-gold py-4 text-xs font-bold uppercase tracking-widest text-primary transition-all duration-300 hover:bg-gold-soft hover:shadow-lg hover:shadow-gold/15 disabled:opacity-60"
             >
-              Sign In
+              {signingIn ? "Signing In…" : "Sign In"}
             </button>
           </form>
           
@@ -282,6 +279,7 @@ function AdminPage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <button
+              type="button"
               onClick={openAddForm}
               className="inline-flex items-center gap-2 rounded-full bg-[#1B365D] dark:bg-gold text-white dark:text-primary px-6 py-3.5 text-xs font-semibold uppercase tracking-wider shadow hover:scale-[1.02] active:scale-95 transition-all duration-200"
             >
@@ -592,6 +590,7 @@ function AdminPage() {
                         <td className="py-4 pl-4 pr-8 align-middle text-right">
                           <div className="flex items-center justify-end gap-2.5">
                             <button
+                              type="button"
                               onClick={() => openEditForm(prop)}
                               className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-300 hover:border-gold hover:text-gold hover:bg-gold/5 dark:hover:bg-gold/10 transition-all duration-200 cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
                               title="Edit Listing"
@@ -599,6 +598,7 @@ function AdminPage() {
                               <Edit3 className="h-4 w-4" />
                             </button>
                             <button
+                              type="button"
                               onClick={() => handleDelete(prop.id)}
                               className="flex h-10 w-10 items-center justify-center rounded-full border border-red-200 dark:border-red-950/40 bg-white dark:bg-neutral-950 text-red-500 hover:border-red-600 hover:text-red-600 hover:bg-red-500/5 transition-all duration-200 cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
                               title="Delete Listing"
@@ -658,12 +658,14 @@ function AdminPage() {
                   {/* Mobile Actions */}
                   <div className="flex items-center gap-3 pt-3 border-t border-neutral-100 dark:border-neutral-800/60">
                     <button
+                      type="button"
                       onClick={() => openEditForm(prop)}
                       className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-800 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition cursor-pointer"
                     >
                       <Edit3 className="h-3.5 w-3.5" /> Edit
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleDelete(prop.id)}
                       className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-red-200/60 dark:border-red-950/40 py-3 text-xs font-semibold uppercase tracking-wider text-red-500 hover:bg-red-500/10 transition cursor-pointer"
                     >

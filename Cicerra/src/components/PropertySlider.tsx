@@ -53,6 +53,7 @@ export function PropertySlider() {
             const isActive = activeCategory === cat.value;
             return (
               <button
+                type="button"
                 key={cat.value}
                 onClick={() => {
                   setActiveCategory(cat.value);
@@ -76,6 +77,7 @@ export function PropertySlider() {
         {/* Next/Prev Buttons */}
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => handleScroll("left")}
             aria-label="Previous properties"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-foreground transition-all duration-200 hover:border-gold hover:text-gold hover:shadow-sm active:scale-95"
@@ -83,6 +85,7 @@ export function PropertySlider() {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
+            type="button"
             onClick={() => handleScroll("right")}
             aria-label="Next properties"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-foreground transition-all duration-200 hover:border-gold hover:text-gold hover:shadow-sm active:scale-95"

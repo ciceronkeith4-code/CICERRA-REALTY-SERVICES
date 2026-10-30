@@ -4,8 +4,11 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Check, Search } from "lucide-react";
 
 import heroImg from "@/assets/hero.jpg";
-import ryanImg from "@/assets/ryan-arms-crossed.png";
+import heroWebp from "@/assets/hero.webp";
+import ryanImg from "@/assets/ryan-arms-crossed.jpg";
+import ryanWebp from "@/assets/ryan-arms-crossed.webp";
 import ctaImg from "@/assets/cta.jpg";
+import ctaWebp from "@/assets/cta.webp";
 
 import bdoLogo from "@/assets/bdo.png";
 import bpiLogo from "@/assets/bpi.png";
@@ -24,29 +27,21 @@ import { CountUp } from "@/components/CountUp";
 import { Testimonials } from "@/components/Testimonials";
 import { PropertySearch } from "@/components/PropertySearch";
 import { services } from "@/data/services";
+import { seo } from "@/lib/seo";
 
 
 
 
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Cicerra Realty Services — Luxury Homes. Smart Investments." },
-      {
-        name: "description",
-        content:
-          "Discover premium homes, smart investments, and trusted real estate guidance with Cicerra Realty Services.",
-      },
-      { property: "og:title", content: "Cicerra Realty Services" },
-      {
-        property: "og:description",
-        content: "Luxury homes. Smart investments. Trusted real estate experts.",
-      },
-      { property: "og:image", content: heroImg },
-      { name: "twitter:image", content: heroImg },
-    ],
-  }),
+  head: () =>
+    seo({
+      title: "Cicerra Realty Services — Luxury Homes. Smart Investments.",
+      description:
+        "Discover premium homes, smart investments, and trusted real estate guidance with Cicerra Realty Services.",
+      path: "/",
+      image: heroImg,
+    }),
   component: Index,
 });
 
@@ -65,16 +60,19 @@ function Index() {
       {!introDone && <Intro onDone={handleIntroDone} />}
 
       {/* HERO */}
-      <section className="relative min-h-[85vh] sm:min-h-[90vh] w-full bg-[#051C3F] text-white flex flex-col justify-center pt-24 pb-20 sm:pt-32 sm:pb-28 z-30">
-        {/* Static Background Wrapper containing all video/image backgrounds */}
+      <section className="relative min-h-[600px] sm:min-h-[88vh] w-full bg-[#051C3F] text-white flex flex-col justify-center pt-24 pb-16 sm:pt-28 sm:pb-24 z-30">
+        {/* Static background image wrapper */}
         <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
-          {/* Fallback Image with Cinematic Pan */}
-          <div className="absolute inset-0 overflow-hidden">
+          {/* Background Image with Cinematic Pan */}
+          <picture className="absolute inset-0 overflow-hidden">
+            <source srcSet={heroWebp} type="image/webp" />
             <motion.img
               src={heroImg}
-              alt="Luxury home at dusk fallback"
+              alt=""
               width={1920}
               height={1280}
+              fetchPriority="high"
+              decoding="async"
               className="h-full w-full object-cover"
               animate={{
                 scale: [1.05, 1.12, 1.05],
@@ -88,19 +86,7 @@ function Index() {
                 repeatType: "reverse"
               }}
             />
-          </div>
-
-          {/* Cinematic Video Background */}
-          <div className="absolute inset-0 overflow-hidden">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="h-full w-full object-cover opacity-70"
-              src="https://assets.mixkit.co/videos/preview/mixkit-luxury-home-with-swimming-pool-at-dusk-32884-large.mp4"
-            />
-          </div>
+          </picture>
 
           <div 
             className="absolute inset-0 z-10 pointer-events-none" 
@@ -110,7 +96,7 @@ function Index() {
           />
         </div>
 
-        <div className="container-rail relative z-10 flex flex-col justify-center gap-8 mt-12 sm:mt-16">
+        <div className="container-rail relative z-10 flex flex-col justify-center gap-8 mt-4 sm:mt-6">
           <div className="w-full flex justify-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -118,7 +104,7 @@ function Index() {
               transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
               className="w-full max-w-5xl"
             >
-              <p className="text-[10px] uppercase tracking-[0.4em] text-gold font-bold">
+              <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold">
                 Cicerra Realty Services
               </p>
               <h1 className="mt-3 font-display text-4xl leading-[1.08] text-balance text-white sm:text-6xl md:text-7xl">
@@ -147,10 +133,10 @@ function Index() {
       </section>
 
       {/* 1. OUR SERVICES (ON TOP OF WEBSITE CONTENT) */}
-      <section id="services" className="bg-white py-20 border-b border-border/40 relative z-20">
+      <section id="services" className="scroll-mt-24 bg-white py-20 border-b border-border/40 relative z-20">
         <div className="container-rail">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-gold font-bold">Our Services</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gold-deep font-bold">Our Services</p>
             <h2 className="mt-4 font-display text-3xl sm:text-4xl text-[#1B365D]">
               Every step of the journey, beautifully handled.
             </h2>
@@ -187,10 +173,10 @@ function Index() {
       </section>
 
       {/* 2. ACCREDITED DEVELOPERS & BANKS */}
-      <section id="partners" className="bg-[#FAF9F6] py-20 border-b border-border/40 relative z-20">
+      <section id="partners" className="scroll-mt-24 bg-[#FAF9F6] py-20 border-b border-border/40 relative z-20">
         <div className="container-rail">
           <Reveal className="mx-auto max-w-2xl text-center mb-12">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-gold font-bold">Accredited Partners</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gold-deep font-bold">Accredited Partners</p>
             <h2 className="mt-4 font-display text-3xl sm:text-4xl text-[#1B365D]">
               Builders & Financial Partners
             </h2>
@@ -204,17 +190,21 @@ function Index() {
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10">
                 {[
-                  { name: "STA. LUCIA INC", logo: staLuciaLogo, className: "max-h-16" },
-                  { name: "ROCKWELL", logo: rockwellLogo, className: "max-h-20" },
-                  { name: "MEGAWORLD", logo: megaworldLogo, className: "max-h-20 scale-[1.25]" },
-                  { name: "AVIDA", logo: avidaLogo, className: "max-h-16 scale-125" },
-                  { name: "ALVEO", logo: alveoLogo, className: "max-h-7" }
+                  { name: "STA. LUCIA INC", logo: staLuciaLogo, w: 300, h: 200, className: "max-h-16" },
+                  { name: "ROCKWELL", logo: rockwellLogo, w: 200, h: 200, className: "max-h-20" },
+                  { name: "MEGAWORLD", logo: megaworldLogo, w: 239, h: 200, className: "max-h-20 scale-[1.25]" },
+                  { name: "AVIDA", logo: avidaLogo, w: 200, h: 200, className: "max-h-16 scale-125" },
+                  { name: "ALVEO", logo: alveoLogo, w: 320, h: 68, className: "max-h-7" }
                 ].map((d) => (
                   <div key={d.name} className="flex h-20 items-center justify-center px-3 text-center transition-all hover:scale-105 duration-200">
                     <img
                       src={d.logo}
                       alt={`${d.name} logo`}
-                      className={`${d.className} object-contain select-none`}
+                      width={d.w}
+                      height={d.h}
+                      loading="lazy"
+                      decoding="async"
+                      className={`${d.className} h-auto w-auto max-w-full object-contain select-none`}
                     />
                   </div>
                 ))}
@@ -228,16 +218,20 @@ function Index() {
               </h3>
               <div className="grid grid-cols-2 gap-x-6 gap-y-10">
                 {[
-                  { name: "BDO", logo: bdoLogo, className: "max-h-8" },
-                  { name: "BPI", logo: bpiLogo, className: "max-h-14 scale-115" },
-                  { name: "SECURITY BANK", logo: secBankLogo, className: "max-h-14" },
-                  { name: "RCBC", logo: rcbcLogo, className: "max-h-11" }
+                  { name: "BDO", logo: bdoLogo, w: 320, h: 112, className: "max-h-8" },
+                  { name: "BPI", logo: bpiLogo, w: 259, h: 200, className: "max-h-14 scale-115" },
+                  { name: "SECURITY BANK", logo: secBankLogo, w: 230, h: 200, className: "max-h-14" },
+                  { name: "RCBC", logo: rcbcLogo, w: 239, h: 200, className: "max-h-11" }
                 ].map((b) => (
                   <div key={b.name} className="flex h-20 items-center justify-center px-4 py-2 text-center transition-all hover:scale-105 duration-200">
                     <img
                       src={b.logo}
                       alt={`${b.name} logo`}
-                      className={`${b.className} object-contain select-none`}
+                      width={b.w}
+                      height={b.h}
+                      loading="lazy"
+                      decoding="async"
+                      className={`${b.className} h-auto w-auto max-w-full object-contain select-none`}
                     />
                   </div>
                 ))}
@@ -248,11 +242,11 @@ function Index() {
       </section>
 
       {/* 3. OUR STORY & BROKER CREDENTIALS */}
-      <section id="about" className="bg-white py-20 relative z-20">
+      <section id="about" className="scroll-mt-24 bg-white py-20 relative z-20">
         <div className="container-rail">
           <div className="grid items-center gap-12 lg:grid-cols-12 mb-16 max-w-5xl mx-auto w-full">
             <Reveal className="lg:col-span-7">
-              <p className="text-[10px] uppercase tracking-[0.4em] text-gold">Our Story</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-gold-deep">Our Story</p>
               <h2 className="mt-4 font-display text-4xl text-balance leading-[1.1] sm:text-5xl">
                 More than real estate.<br />
                 <span className="italic text-muted-foreground">Helping families find home.</span>
@@ -273,14 +267,18 @@ function Index() {
 
             <Reveal delay={0.15} className="relative lg:col-span-5 flex justify-center">
               <div className="relative overflow-hidden rounded-[2rem] border-2 border-gold/30 bg-white p-2 shadow-md w-fit">
-                <img
-                  src={ryanImg}
-                  alt="Ryan John Ciceron"
-                  loading="lazy"
-                  width={600}
-                  height={800}
-                  className="h-[400px] w-auto max-w-full rounded-2xl object-contain"
-                />
+                <picture>
+                  <source srcSet={ryanWebp} type="image/webp" />
+                  <img
+                    src={ryanImg}
+                    alt="Ryan John Ciceron"
+                    loading="lazy"
+                    decoding="async"
+                    width={673}
+                    height={1000}
+                    className="h-[400px] w-auto max-w-full rounded-2xl object-contain"
+                  />
+                </picture>
               </div>
             </Reveal>
           </div>
@@ -298,7 +296,7 @@ function Index() {
                   <p className="font-display text-3xl sm:text-4xl text-[#1B365D] font-bold">
                     <CountUp to={s.n} suffix={s.suf} />
                   </p>
-                  <p className="mt-2 text-[9px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
                     {s.label}
                   </p>
                 </div>
@@ -312,7 +310,7 @@ function Index() {
       <section className="bg-[#FAF9F6] py-20 border-t border-border/40 relative z-20">
         <div className="container-rail">
           <Reveal className="text-center mb-12">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-gold">Client Testimonials</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gold-deep">Client Testimonials</p>
             <h2 className="mt-4 font-display text-3xl sm:text-4xl">In their own words.</h2>
           </Reveal>
           <Testimonials />
@@ -321,18 +319,22 @@ function Index() {
 
       {/* 5. CALL TO ACTION */}
       <section className="relative overflow-hidden">
-        <img
-          src={ctaImg}
-          alt="Luxury home at dusk"
-          loading="lazy"
-          width={1920}
-          height={1080}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <picture>
+          <source srcSet={ctaWebp} type="image/webp" />
+          <img
+            src={ctaImg}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            width={1920}
+            height={1080}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        </picture>
         <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/70 to-black/90" />
         <div className="container-rail relative z-10 py-24 text-center sm:py-28">
           <Reveal>
-            <p className="text-[10px] uppercase tracking-[0.4em] text-gold font-bold">LET'S BEGIN</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold">LET'S BEGIN</p>
             <h2 className="mx-auto mt-4 max-w-3xl font-display text-4xl text-balance text-white sm:text-5xl">
               Ready to find your next property?
             </h2>

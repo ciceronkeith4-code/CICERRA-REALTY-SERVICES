@@ -1,23 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/Reveal";
 import { services } from "@/data/services";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/services")({
-  head: () => ({
-    meta: [
-      { title: "Services — Cicerra Real Estate Service" },
-      {
-        name: "description",
-        content:
-          "Residential sales, investment advisory, brokerage, consultation, documentation, and marketing — handled end-to-end by Cicerra.",
-      },
-      { property: "og:title", content: "Services — Cicerra Real Estate Service" },
-      {
-        property: "og:description",
-        content: "Every step of the real estate journey, beautifully handled.",
-      },
-    ],
-  }),
+  head: () =>
+    seo({
+      title: "Services — Cicerra Realty Services",
+      description:
+        "Residential sales, investment advisory, brokerage, consultation, documentation, and marketing — handled end-to-end by Cicerra.",
+      path: "/services",
+    }),
   component: ServicesPage,
 });
 
@@ -27,7 +20,7 @@ function ServicesPage() {
       <section className="bg-background pt-32 pb-16 sm:pt-40 sm:pb-20">
         <div className="container-rail">
           <Reveal className="max-w-3xl">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-gold">What we do</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gold-deep">What we do</p>
             <h1 className="mt-5 font-display text-5xl leading-[1.05] text-balance sm:text-7xl">
               Every step,<br />
               <span className="italic text-muted-foreground">beautifully handled.</span>
@@ -43,7 +36,7 @@ function ServicesPage() {
               <Reveal key={s.title} delay={(i % 3) * 0.06}>
                 <div className="group flex h-full flex-col bg-background p-10 transition hover:bg-surface">
                   <s.icon className="h-8 w-8 text-gold transition-transform group-hover:-translate-y-1" />
-                  <h3 className="mt-6 font-display text-2xl text-foreground">{s.title}</h3>
+                  <h2 className="mt-6 font-display text-2xl text-foreground">{s.title}</h2>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.description}</p>
                 </div>
               </Reveal>

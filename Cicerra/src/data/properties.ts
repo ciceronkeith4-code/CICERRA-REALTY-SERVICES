@@ -134,25 +134,39 @@ export const properties: Property[] = [
   },
 ];
 
+// Always resolves to an array: stored listings when the API returns them,
+// otherwise the bundled defaults above.
 export async function getStoredProperties(): Promise<Property[]> {
   try {
-    const res = await fetch("/api/properties");
-    if (!res.ok) throw new Error("Failed to fetch");
-    return await res.json();
+    const res = await fetch("/api/properties", { headers: { Accept: "application/json" } });
+    const contentType = res.headers.get("content-type") ?? "";
+    if (!res.ok || !contentType.includes("application/json")) {
+      throw new Error(`Unexpected response: ${res.status} ${contentType}`);
+    }
+    const data: unknown = await res.json();
+    return Array.isArray(data) ? (data as Property[]) : properties;
   } catch (e) {
-    console.error("Failed to fetch properties from API, falling back to defaults", e);
+    console.warn("Failed to fetch properties from API, falling back to defaults", e);
     return properties;
   }
 }
 
+// Throws with a user-facing message when the save did not go through.
 export async function saveStoredProperties(props: Property[]): Promise<void> {
+  const res = await fetch("/api/properties", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(props),
+  });
+  if (res.ok) return;
+  if (res.status === 401) throw new Error("Your admin session has expired. Please sign in again.");
+  let message = `Save failed (HTTP ${res.status}).`;
   try {
-    await fetch("/api/properties", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(props),
-    });
-  } catch (e) {
-    console.error("Failed to save properties to API", e);
+    const body = (await res.json()) as { error?: string };
+    if (body.error) message = `Save failed: ${body.error}.`;
+  } catch {
+    // keep the generic message
   }
+  throw new Error(message);
 }
