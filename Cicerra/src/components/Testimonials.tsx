@@ -34,7 +34,13 @@ export function Testimonials() {
   const [playing, setPlaying] = useState(true);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+  // The server can't know the preference; apply it after hydration so the
+  // first client render matches the server HTML.
+  const reduceMotion = mounted && prefersReducedMotion;
+
+  useEffect(() => setMounted(true), []);
 
   // WCAG 2.2.2: autoplay stops on hover/focus, can be paused, and never runs
   // for people who prefer reduced motion.
