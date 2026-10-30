@@ -191,10 +191,12 @@ function SelectField({
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="absolute inset-0 h-full w-full cursor-pointer appearance-none rounded-2xl opacity-0"
+        // Explicit colours: the hero sets text-white, and the native option list
+        // would otherwise inherit it (white text on the white popup).
+        className="absolute inset-0 h-full w-full cursor-pointer appearance-none rounded-2xl bg-white text-neutral-900 opacity-0 [color-scheme:light]"
       >
         {options.map((o) => (
-          <option key={o.value} value={o.value}>
+          <option key={o.value} value={o.value} className="bg-white text-neutral-900">
             {o.label}
           </option>
         ))}
